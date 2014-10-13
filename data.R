@@ -38,6 +38,34 @@ batsmen_record = function(batsman){
 
 Batsmen_records =  as.data.frame(t(sapply(Batsmen,batsmen_record)),row.names=FALSE);
 
+bowler_record = function(bowler){
+  Bowler = data.frame(matrix(nrow=1,ncol=10));
+  names(Bowler) = c("Bowler","Country","Matches","Wickets","Runs","Overs","Average","Economy","Strike.Rate","Dot.Ball.Percent");
+  Bowler$Bowler = bowler;
+  record = Cricket[(Cricket$Bowler==bowler),];
+  if(record[1,]$Batting.Team==record[1,]$Team1){
+    Bowler$Country = record[1,]$Team2;
+  }
+  else{
+    Bowler$Country = record[1,]$Team1;
+  }
+  Bowler$Matches = length(unique(Cricket$Match.No[(Cricket$Bowler==bowler)]));
+  Bowler$Runs = sum(Cricket$Runs.Batsman[(Cricket$Bowler==bowler)])+sum(Cricket$Runs.Extras.No.Ball[(Cricket$Bowler==bowler)])+sum(Cricket$Runs.Extras.Wides[(Cricket$Bowler==bowler)]);
+  Balls = length(Cricket$Ball.No[((Cricket$Bowler==bowler)&(Cricket$Runs.Extras.Wides==0)&(Cricket$Runs.Extras.No.Ball==0))]);
+  Bowler$Overs = round(Balls/6,0);
+  Bowler$Wickets = length(Cricket$Ball.No[((Cricket$Dismissed.Player!="")&(Cricket$Bowler==bowler))]);
+  Bowler$Average = round(Bowler$Runs/Bowler$Wickets,2);
+  if(is.infinite(Bowler$Average)){
+    Bowler$Average = Bowler$Runs;
+  }
+  Bowler$Economy = round(Bowler$Runs*6/Balls,2);
+  Bowler$Strike.Rate = round(Balls/Bowler$Wickets,2);
+  if(is.infinite(Bowler$Strike.Rate)){
+    Bowler$Strike.Rate = Balls;
+  }
+  Bowler$Dot.Ball.Percent = round(length(Cricket$Ball.No[((Cricket$Bowler==bowler)&(Cricket$Total.Runs==0))])*100/Balls,2);
+  return(Bowler);
+}
 
-
+Bowlers_records =  as.data.frame(t(sapply(Bowlers,bowler_record)),row.names=FALSE);
 
