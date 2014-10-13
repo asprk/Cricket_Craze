@@ -69,3 +69,8 @@ bowler_record = function(bowler){
 
 Bowlers_records =  as.data.frame(t(sapply(Bowlers,bowler_record)),row.names=FALSE);
 
+length(Cities);
+
+
+
+
